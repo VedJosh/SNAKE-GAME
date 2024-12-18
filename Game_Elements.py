@@ -19,6 +19,10 @@ class Snake:
         for segment_num in range(len(self.snake_segments)-1):
             self.snake_segments[segment_num].goto(self.snake_segments[segment_num+1].pos())
         self.snake_segments[-1].forward(20)
+    
+    def hide(self):
+        for snake_segment in self.snake_segments:
+            snake_segment.hideturtle()
 
     def up(self):
         if self.snake_segments[-1].heading() != 270:
@@ -79,18 +83,27 @@ class ScoreBoard(Turtle):
     def __init__(self):
         super().__init__()
         self.score = 0
+        self.up()
+        with open('snake.txt') as file:
+            highscore = file.read()
+        self.highscore = int(highscore)
         self.hideturtle()
         self.goto(0,290)
         self.color('white')
 
     def score_update(self):
         self.clear()
-        self.write(f'Score: {self.score}',align='center',font=('Arial',20,'normal'))
+        self.write(f'Score: {self.score} High Score: {self.highscore}',align='center',font=('Arial',20,'normal'))
 
     def gameover(self):
-        self.goto(0,0)
-        self.write('GAME OVER',align='center',font=('Arial',20,'normal'))
-    
+        
+        if self.score >= self.highscore:
+            self.highscore = self.score
+            with open('snake.txt','w') as file:
+                file.write(str(self.highscore))
+        self.score = 0
+        self.score_update()
+
 class Board(Turtle):
     def __init__(self):
         super().__init__()

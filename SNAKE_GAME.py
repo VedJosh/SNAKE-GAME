@@ -27,11 +27,13 @@ screen.update()
 time.sleep(time_gap)
 
 # setting keys to control snake
-screen.listen()
-screen.onkey(fun=snake.up,key='Up')
-screen.onkey(fun=snake.down,key='Down')
-screen.onkey(fun=snake.left,key='Left')
-screen.onkey(fun=snake.right,key='Right')
+def control():
+    screen.listen()
+    screen.onkey(fun=snake.up,key='Up')
+    screen.onkey(fun=snake.down,key='Down')
+    screen.onkey(fun=snake.left,key='Left')
+    screen.onkey(fun=snake.right,key='Right')
+control()
 
 # setting the food, scoreboard and drawing board of game
 food = Food()
@@ -39,18 +41,25 @@ scoreboard = ScoreBoard()
 board = Board()
 
 is_game_on = True
+
 while is_game_on:
     scoreboard.score_update()
     snake.move_snake()
-    screen.update()
     time.sleep(time_gap)
-    if snake.is_out_of_board() or snake.iscollided():
-        is_game_on = False
-        scoreboard.gameover()
 
+    if snake.is_out_of_board() or snake.iscollided():
+        scoreboard.gameover()
+        snake.hide()
+        snake = Snake()
+        snake.create_snake()
+        control()
+        screen.update()
+    
     if snake.snake_segments[-1].distance(food) < 15:
         food.refresh()
         scoreboard.score += 1
         snake.extend()
         screen.update()
+    
+    screen.update()
 screen.exitonclick()
